@@ -13,10 +13,21 @@
     <input type="password" id="password" placeholder="Admin password">
     <button onclick="login()">Login</button>
 
-    <h2>Messages</h2>
-    <button onclick="loadMessages()">Refresh</button>
+    <hr>
 
-    <div id="messages"></div>
+    <h2>Messages</h2>
+
+    <div class="carousel">
+
+      <button onclick="prevMessage()">⬅</button>
+
+      <div id="messageBox">No messages yet</div>
+
+      <button onclick="nextMessage()">➡</button>
+
+    </div>
+
+    <p id="counter"></p>
 
   </div>
 
