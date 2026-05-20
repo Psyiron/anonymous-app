@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div class="card" id="loginBox">
+    <h1>Admin Login</h1>
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div class="card" id="dashboard" style="display:none;">
+    <h1>Messages</h1>
+    <button onclick="loadMessages()">Refresh</button>
+    <div id="messages"></div>
+  </div>
+
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
