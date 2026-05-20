@@ -1,13 +1,14 @@
 let token = localStorage.getItem("token");
+let messages = [];
+let index = 0;
 
+// ================= LOGIN =================
 async function login() {
   const password = document.getElementById("password").value;
 
   const res = await fetch("/admin/login", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password })
   });
 
@@ -17,33 +18,65 @@ async function login() {
     token = data.token;
     localStorage.setItem("token", token);
     alert("Login successful!");
+
     loadMessages();
+    startLiveUpdates();
   } else {
     alert("Wrong password");
   }
 }
 
+// ================= LOAD MESSAGES =================
 async function loadMessages() {
-  if (!token) {
-    alert("Please login first");
-    return;
-  }
+  if (!token) return;
 
   const res = await fetch("/messages", {
-    headers: {
-      "Authorization": token
-    }
+    headers: { "Authorization": token }
   });
 
   const data = await res.json();
 
-  const container = document.getElementById("messages");
-  container.innerHTML = "";
+  messages = data;
+  index = 0;
 
-  data.forEach(msg => {
-    const div = document.createElement("div");
-    div.className = "msg";
-    div.innerText = `${msg.date} - ${msg.message}`;
-    container.appendChild(div);
-  });
+  showMessage();
+}
+
+// ================= SHOW MESSAGE (CAROUSEL) =================
+function showMessage() {
+  const box = document.getElementById("messageBox");
+  const counter = document.getElementById("counter");
+
+  if (messages.length === 0) {
+    box.innerText = "No messages yet";
+    counter.innerText = "";
+    return;
+  }
+
+  const msg = messages[index];
+
+  box.innerText = `No.${index + 1}... ${msg.message}`;
+  counter.innerText = `${index + 1} / ${messages.length}`;
+}
+
+// ================= NAVIGATION =================
+function nextMessage() {
+  if (index < messages.length - 1) {
+    index++;
+    showMessage();
+  }
+}
+
+function prevMessage() {
+  if (index > 0) {
+    index--;
+    showMessage();
+  }
+}
+
+// ================= LIVE UPDATES =================
+function startLiveUpdates() {
+  setInterval(() => {
+    loadMessages();
+  }, 5000); // refresh every 5 seconds
 }
