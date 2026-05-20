@@ -3,33 +3,45 @@ import cors from "cors";
 import fs from "fs";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
+// ✅ Middleware FIRST
+app.use(cors());
+app.use(express.json());
+
+// ✅ Render PORT (ONLY ONCE)
+const PORT = process.env.PORT;
+
+// ======================
+// Home route
+// ======================
 app.get("/", (req, res) => {
   res.send("Anonymous Message API is running 🚀");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-app.use(cors());
-app.use(express.json());
-
+// ======================
+// Admin system
+// ======================
 const ADMIN_PASSWORD = "admin123";
 let adminToken = null;
 
-// Load messages
+// ======================
+// Safe file loader
+// ======================
 const loadMessages = () => {
-  return JSON.parse(fs.readFileSync("./messages.json"));
+  try {
+    return JSON.parse(fs.readFileSync("./messages.json"));
+  } catch (err) {
+    return [];
+  }
 };
 
-// Save messages
 const saveMessages = (data) => {
   fs.writeFileSync("./messages.json", JSON.stringify(data, null, 2));
 };
 
-// Send anonymous message
+// ======================
+// Send message
+// ======================
 app.post("/send", (req, res) => {
   const { message } = req.body;
 
@@ -48,7 +60,9 @@ app.post("/send", (req, res) => {
   res.send({ success: true });
 });
 
+// ======================
 // Admin login
+// ======================
 app.post("/admin/login", (req, res) => {
   const { password } = req.body;
 
@@ -60,7 +74,9 @@ app.post("/admin/login", (req, res) => {
   res.status(401).json({ error: "Wrong password" });
 });
 
+// ======================
 // Get messages (admin only)
+// ======================
 app.get("/messages", (req, res) => {
   const token = req.headers.authorization;
 
@@ -71,6 +87,9 @@ app.get("/messages", (req, res) => {
   res.json(loadMessages());
 });
 
+// ======================
+// START SERVER (ONLY ONCE)
+// ======================
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
