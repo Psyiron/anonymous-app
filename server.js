@@ -3,7 +3,15 @@ import cors from "cors";
 import fs from "fs";
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+  res.send("Anonymous Message API is running 🚀");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 app.use(cors());
 app.use(express.json());
