@@ -1,15 +1,26 @@
-const API = "https://your-backend-url.onrender.com";
-
-function sendMessage() {
+async function sendMessage() {
   const message = document.getElementById("message").value;
+  const status = document.getElementById("status");
 
-  fetch(`${API}/send`, {
+  if (!message) {
+    status.innerText = "Message cannot be empty";
+    return;
+  }
+
+  const res = await fetch("/send", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({ message })
-  })
-  .then(res => res.json())
-  .then(() => {
-    document.getElementById("status").innerText = "Sent anonymously!";
   });
+
+  const data = await res.json();
+
+  if (data.success) {
+    status.innerText = "Message sent successfully!";
+    document.getElementById("message").value = "";
+  } else {
+    status.innerText = "Failed to send message";
+  }
 }
