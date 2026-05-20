@@ -1,21 +1,38 @@
 import express from "express";
 import cors from "cors";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 
-// ✅ Middleware FIRST
+// ======================
+// FIX: __dirname for ES Modules
+// ======================
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ======================
+// Middleware
+// ======================
 app.use(cors());
 app.use(express.json());
 
-// ✅ Render PORT (ONLY ONCE)
+// ======================
+// Serve frontend (IMPORTANT)
+// ======================
+app.use(express.static(path.join(__dirname, "public")));
+
+// ======================
+// Render PORT
+// ======================
 const PORT = process.env.PORT;
 
 // ======================
-// Home route
+// Home route → serves your website
 // ======================
 app.get("/", (req, res) => {
-  res.send("Anonymous Message API is running 🚀");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // ======================
@@ -88,7 +105,7 @@ app.get("/messages", (req, res) => {
 });
 
 // ======================
-// START SERVER (ONLY ONCE)
+// START SERVER
 // ======================
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
